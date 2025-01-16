@@ -76,6 +76,7 @@ class WindowGrabber:
         returns a list of [wm_class, title] lists
         """
         if self.integration is None:
+            log.error("no integration enable for retrieving windows")
             return []
 
         return self.integration.get_all_windows()

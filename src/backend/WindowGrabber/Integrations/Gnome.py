@@ -72,11 +72,13 @@ class Gnome(Integration):
         
     def get_all_windows(self) -> list[Window]:
         if not self.get_is_connected():
+            log.error("dbus is not connected")
             return []
         
         try:
             answer = json.loads(self.interface.GetAllWindows())
-        except:
+        except Exception as ex:
+            log.error(f"failed to get windows. {ex}")
             return []
         windows: list[Window] = []
         
@@ -84,6 +86,7 @@ class Gnome(Integration):
             wm_class = window.get("wm_class")
             title = window.get("title")
             windows.append(Window(wm_class, title))
+            log.debug(f"added window {title} with class {wm_class}")
 
         return windows
     
