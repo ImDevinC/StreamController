@@ -11,7 +11,9 @@ This programm comes with ABSOLUTELY NO WARRANTY!
 You should have received a copy of the GNU General Public License
 along with this program. If not, see <https://www.gnu.org/licenses/>.
 """
+
 import os
+
 # Import gtk modules
 from textwrap import wrap
 import time
@@ -39,6 +41,7 @@ from src.backend.DeckManagement.ImageHelpers import image2pixbuf
 from src.windows.Store.Badges import Badge
 from packaging import version
 
+
 class StorePreview(Gtk.FlowBoxChild):
     def __init__(self, store_page: StorePage):
         super().__init__()
@@ -52,10 +55,14 @@ class StorePreview(Gtk.FlowBoxChild):
         self.build()
 
     def build(self):
-        self.main_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL,
-                                 hexpand=True, vexpand=False,
-                                 css_classes=["no-padding"],
-                                 width_request=250, height_request=250)
+        self.main_box = Gtk.Box(
+            orientation=Gtk.Orientation.VERTICAL,
+            hexpand=True,
+            vexpand=False,
+            css_classes=["no-padding"],
+            width_request=250,
+            height_request=250,
+        )
         self.set_child(self.main_box)
 
         # ADD BOX FOR SEARCHING
@@ -66,44 +73,70 @@ class StorePreview(Gtk.FlowBoxChild):
         self.search_bar = Gtk.SearchBar()
         self.search_box.append(self.search_bar)
 
-        self.main_button = Gtk.Button(hexpand=True, vexpand=False,
-                                      width_request=250, height_request=275,
-                                      css_classes=["no-padding", "no-round-bottom"])
+        self.main_button = Gtk.Button(
+            hexpand=True,
+            vexpand=False,
+            width_request=250,
+            height_request=275,
+            css_classes=["no-padding", "no-round-bottom"],
+        )
         self.main_button.connect("clicked", self.on_click_main)
         self.main_box.append(self.main_button)
 
         # Main Box
-        self.main_button_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL,
-                                       hexpand=True, vexpand=False)
+        self.main_button_box = Gtk.Box(
+            orientation=Gtk.Orientation.VERTICAL, hexpand=True, vexpand=False
+        )
         self.main_button.set_child(self.main_button_box)
 
         # Thumbnail
-        self.image = Gtk.Picture(hexpand=True, vexpand=True,
-                                 content_fit=Gtk.ContentFit.COVER,
-                                 height_request=90, width_request=250,
-                                 css_classes=["plugin-store-image"], can_shrink=True)
+        self.image = Gtk.Picture(
+            hexpand=True,
+            vexpand=True,
+            content_fit=Gtk.ContentFit.COVER,
+            height_request=90,
+            width_request=250,
+            css_classes=["plugin-store-image"],
+            can_shrink=True,
+        )
         self.main_button_box.append(self.image)
 
         # Container for Labels and Badges
-        self.content_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, margin_top=6, margin_start=6, margin_bottom=6)
+        self.content_box = Gtk.Box(
+            orientation=Gtk.Orientation.VERTICAL,
+            margin_top=6,
+            margin_start=6,
+            margin_bottom=6,
+        )
         self.main_button_box.append(self.content_box)
 
         self.name_label = Gtk.Label(css_classes=["bold"], xalign=0)
         self.author_label = Gtk.Label(sensitive=False, xalign=0)
-        self.description_label = Gtk.Label(css_classes=["dim-label"], margin_bottom=6,
-                                     label=gl.lm.get("store.preview.no-description"),
-                                     halign=Gtk.Align.START, hexpand=False)
+        self.description_label = Gtk.Label(
+            css_classes=["dim-label"],
+            margin_bottom=6,
+            label=gl.lm.get("store.preview.no-description"),
+            halign=Gtk.Align.START,
+            hexpand=False,
+        )
 
         self.content_box.append(self.name_label)
         self.content_box.append(self.author_label)
         self.content_box.append(self.description_label)
 
         # Container for Badges
-        self.badge_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, valign=Gtk.Align.CENTER,
-                                 hexpand=False)
+        self.badge_box = Gtk.Box(
+            orientation=Gtk.Orientation.HORIZONTAL,
+            valign=Gtk.Align.CENTER,
+            hexpand=False,
+        )
         self.content_box.append(self.badge_box)
 
-        self.warning_badge = Badge("store.badges.label.warning", css_classes=["destructive-action", "bold"], margin_end=6)
+        self.warning_badge = Badge(
+            "store.badges.label.warning",
+            css_classes=["destructive-action", "bold"],
+            margin_end=6,
+        )
         self.official_badge = Badge("store.badges.label.official", margin_end=6)
         self.verified_badge = Badge("store.badges.label.verified", margin_end=6)
 
@@ -112,35 +145,53 @@ class StorePreview(Gtk.FlowBoxChild):
         self.badge_box.append(self.verified_badge)
 
         # Add Bottom Buttons
-        self.main_button_box.append(Gtk.Separator(orientation=Gtk.Orientation.HORIZONTAL))
+        self.main_button_box.append(
+            Gtk.Separator(orientation=Gtk.Orientation.HORIZONTAL)
+        )
 
-        self.button_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL,
-                                  hexpand=True)
+        self.button_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, hexpand=True)
         self.main_box.append(self.button_box)
 
         # Github Button
-        self.github_button = Gtk.Button(icon_name="web-browser-symbolic",
-                                        hexpand=True,
-                                        css_classes=["no-round-top-left", "no-round-top-right", "no-round-bottom-right"])
+        self.github_button = Gtk.Button(
+            icon_name="web-browser-symbolic",
+            hexpand=True,
+            css_classes=[
+                "no-round-top-left",
+                "no-round-top-right",
+                "no-round-bottom-right",
+            ],
+        )
         self.github_button.connect("clicked", self.on_github_clicked)
         self.button_box.append(self.github_button)
 
         self.button_box.append(Gtk.Separator(orientation=Gtk.Orientation.VERTICAL))
 
         # Install Button
-        self.install_uninstall_button = Gtk.Button(icon_name="folder-download-symbolic",
-                                          hexpand=True,
-                                          css_classes=["no-round-top-left", "no-round-top-right", "no-round-bottom-left"])
+        self.install_uninstall_button = Gtk.Button(
+            icon_name="folder-download-symbolic",
+            hexpand=True,
+            css_classes=[
+                "no-round-top-left",
+                "no-round-top-right",
+                "no-round-bottom-left",
+            ],
+        )
         self.install_uninstall_button.connect("clicked", self.on_download_clicked)
         self.button_box.append(self.install_uninstall_button)
 
         # Install Spinner
-        self.install_spinner_box = Gtk.Box(hexpand=True,
-                                           css_classes=["round-bottom-right", "button-color"],
-                                           overflow=Gtk.Overflow.HIDDEN, visible=False)
+        self.install_spinner_box = Gtk.Box(
+            hexpand=True,
+            css_classes=["round-bottom-right", "button-color"],
+            overflow=Gtk.Overflow.HIDDEN,
+            visible=False,
+        )
         self.button_box.append(self.install_spinner_box)
 
-        self.install_spinner = Gtk.Spinner(spinning=False, visible=True, halign=Gtk.Align.CENTER, hexpand=True)
+        self.install_spinner = Gtk.Spinner(
+            spinning=False, visible=True, halign=Gtk.Align.CENTER, hexpand=True
+        )
         self.install_spinner_box.append(self.install_spinner)
 
     def show_install_spinner(self, show: bool = True):
@@ -153,27 +204,27 @@ class StorePreview(Gtk.FlowBoxChild):
             self.install_spinner_box.set_visible(False)
             self.install_spinner.set_spinning(False)
 
-    def set_image(self, image:Image):
+    def set_image(self, image: Image):
         if image is None:
             return
         image.thumbnail((250, 360))
         pixbuf = image2pixbuf(image, force_transparency=True)
         GLib.idle_add(self.image.set_pixbuf, pixbuf)
 
-    def set_official(self, official:bool):
+    def set_official(self, official: bool):
         self.official_badge.set_visible(official)
 
-    def set_verified(self, verified:bool):
+    def set_verified(self, verified: bool):
         self.verified_badge.set_visible(verified)
         self.warning_badge.set_visible(not verified)
 
-    def set_author_label(self, author:str):
+    def set_author_label(self, author: str):
         self.author_label.set_text(author)
 
-    def set_name_label(self, name:str):
+    def set_name_label(self, name: str):
         self.name_label.set_text(name)
 
-    def set_url(self, url:str):
+    def set_url(self, url: str):
         self.url = url
 
     def on_github_clicked(self, button: Gtk.Button):
@@ -184,7 +235,7 @@ class StorePreview(Gtk.FlowBoxChild):
     def on_download_clicked(self, button: Gtk.Button):
         GLib.idle_add(self.show_install_spinner, True)
 
-        threading.Thread(target=self.perform_download_threaded, args=(), name="perform_download_threaded").start()
+        gl.thread_pool.submit_network_task(self.perform_download_threaded)
 
     @log.catch
     def perform_download_threaded(self):
@@ -241,7 +292,9 @@ class StorePreview(Gtk.FlowBoxChild):
             self.install_uninstall_button.remove_css_class("confirm-button")
 
         elif state == 2:
-            self.install_uninstall_button.set_icon_name("software-update-available-symbolic")
+            self.install_uninstall_button.set_icon_name(
+                "software-update-available-symbolic"
+            )
 
             self.install_uninstall_button.add_css_class("confirm-button")
             self.install_uninstall_button.remove_css_class("red-background")
@@ -260,7 +313,7 @@ class StorePreview(Gtk.FlowBoxChild):
         cutoff = 60 # 50 to have 3 plugins per row per default
 
         if len(description) >= cutoff:
-            description = description[:(cutoff-3)] + "..."
+            description = description[: (cutoff - 3)] + "..."
         self.description_label.set_label(description)
 
     def check_required_version(self, app_version_to_check: str):
